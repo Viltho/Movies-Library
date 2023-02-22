@@ -6,13 +6,13 @@
 
 ! [meow](./image.jpeg)
 
-## Overview
+## Overview:
 
 Today will be the beginning of a multi-lab project, where i will build a movie app that can check the latest movies based on categories.
 
 This week, i will build the server and the database for my project.
 
-## Getting Started
+## Getting Started:
 
 - create repo with name and with .gitignore (node)
 - clone on local machine (using ubuntu) and install express cors
@@ -22,7 +22,7 @@ This week, i will build the server and the database for my project.
 - declare server.get for home/favorite/error404/error500
 - assign welcome message when server starts with server.listen
 
-## Project Features
+## Project Features:
 
 - data info for the movie Spiderman: far from home on main page
 - favorite page message
