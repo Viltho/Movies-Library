@@ -27,7 +27,7 @@ server.get('/',(req,res)=>{
         answers.poster_path,
         answers.overview
     );
-    res.send(`${answers.title}<\n>${answers.poster_path}\n${answers.overview}`);
+    res.json(movie);
 })
 
 // http://localhost:3000/test
@@ -38,16 +38,17 @@ server.get('/favorite',(req,res)=>{
     res.status(200).send(meow);
 })
 
-server.get('*',(req,res)=>{
-    res.status(404).send("Hello ya teacher you reached a wrong bage, go back ples");
-})
+server.get('/error', errorHandler)
+
+function errorHandler(req,res){
+    let object = {"status": 500, "responseText": "Sorry, something went wrong"};
+    res.status(500).json(object);
+}
 
 server.get('*',(req,res)=>{
-    let str = "Hello m3allem you server is bad";
-    res.status(500).send(str);
+    let object = {"status": 404, "responseText": "Sorry, Page not found"};
+    res.status(404).json(object);
 })
-
-
 
 // http://localhost:3000 => (Ip = localhost) (port = 3000)
 server.listen(PORT, () =>{
