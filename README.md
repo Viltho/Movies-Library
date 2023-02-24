@@ -28,3 +28,11 @@ This week, i will build the server and the database for my project.
 - favorite page message
 - page not found error page
 - internal server error page
+
+## Links added the following:
+
+- if you go to home or / a movie with the name of Mad Max and its info will appear
+- if you go to /trending you will see a page of 20 items for the trending movies in all countries.
+- if you go to /search it will display the search functionality working on the website using query and how many pages required.
+- if you go to /people and you have an id for the searched person the results will be an overiew for his background.
+- if you go to /genres it will display all aailable genres on the website so you can use them in the future for the search functionality.
