@@ -32,7 +32,20 @@ server.get('*', pageNotFoundHandler);
 async function trending(req,res){
     let url = "https://api.themoviedb.org/3/trending/all/day?api_key=e693e677de5f501d0f33cbc824eda903";
     let axiosRes = await axios.get(url);
-    res.json(axiosRes.data);
+    let answers = axiosRes.data;
+    let moviesInArray = answers.results;
+    let newArr = [];
+    for (const element of moviesInArray){
+        const movie = new Movie(
+            element.id,
+            element.title,
+            element.release_date,
+            element.poster_path,
+            element.overview
+        );
+        newArr.push(movie);
+    }
+    res.json(newArr);
 }
 async function search(req,res){
     let url = "https://api.themoviedb.org/3/search/company?query=sony&api_key=e693e677de5f501d0f33cbc824eda903&page=1";
