@@ -49,10 +49,13 @@ function trending(req, res) {
     catch(error){errorHandler(error, req, res);}
 }
 async function search(req, res) {
-    let API = process.env.API;
+    try {
+        let API = process.env.API;
     let url = `https://api.themoviedb.org/3/search/company?query=sony&api_key=${API}&page=1`;
     let axiosRes = await axios.get(url);
     res.json(axiosRes.data);
+    }
+    catch(error){errorHandler(error, req, res);}
 }
 function people(req, res) {
     try {
@@ -72,10 +75,13 @@ function people(req, res) {
 }
 
 async function genres(req, res) {
+    try {
     let API = process.env.API;
     let url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${API}&language=en-US`;
     let axiosRes = await axios.get(url);
     res.json(axiosRes.data);
+    }
+    catch (error){errorHandler(error, req, res);}
 }
 
 // function favoriteHandler(req, res) {
