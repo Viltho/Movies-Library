@@ -51,9 +51,18 @@ function trending(req, res) {
 async function search(req, res) {
     try {
         let API = process.env.API;
-    let url = `https://api.themoviedb.org/3/search/company?query=sony&api_key=${API}&page=1`;
-    let axiosRes = await axios.get(url);
-    res.json(axiosRes.data);
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${API}&language=en-US&query=limitless&page=1`;
+    axios.get(url)
+        .then((result) => {
+            let mapResult = result.data.results.map((item) => {
+                let movie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
+                return movie;
+            })
+            res.json(mapResult);
+        })
+        .catch((error) => {
+            res.status(500).send(error);
+        })
     }
     catch(error){errorHandler(error, req, res);}
 }
