@@ -4,7 +4,7 @@
 
 ## WRRC
 
-! [meow](./image.jpeg)
+! [meow](./Image.jpg)
 
 ## Overview:
 
@@ -29,7 +29,7 @@ This week, i will build the server and the database for my project.
 - page not found error page
 - internal server error page
 
-## Links added the following:
+## Links- added the following:
 
 - if you go to home or / a movie with the name of Mad Max and its info will appear
 - if you go to /trending you will see a page of 20 items for the trending movies in all countries.
