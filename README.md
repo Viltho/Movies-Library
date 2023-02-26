@@ -24,8 +24,8 @@ This week, i will build the server and the database for my project.
 
 ## Project Features:
 
-- data info for the movie Spiderman: far from home on main page
-- favorite page message
+- data info for the movie Spiderman: far from home on main page **removed
+- favorite page message **removed
 - page not found error page
 - internal server error page
 

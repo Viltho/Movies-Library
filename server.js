@@ -8,6 +8,7 @@ const cors = require('cors');
 const server = express();
 const axios = require('axios');
 
+require('dotenv').config();
 //server open for all clients requests
 server.use(cors());
 
@@ -25,27 +26,54 @@ server.get('/people', people);
 server.get('/genres', genres);
 // server.get('/newMovieHandler', newMovieHandler);
 // server.get('/favorite', favoriteHandler);
-server.get('/error', errorHandler);
 server.get('*', pageNotFoundHandler);
+server.use(errorHandler);
 
 //functions 
-async function trending(req,res){
-    let url = "https://api.themoviedb.org/3/trending/all/day?api_key=e693e677de5f501d0f33cbc824eda903";
+function trending(req, res) {
+    try{
+    let API = process.env.API;
+    let url = `https://api.themoviedb.org/3/trending/all/day?api_key=${API}`;
+    axios.get(url)
+        .then((result) => {
+            let mapResult = result.data.results.map((item) => {
+                let movie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
+                return movie;
+            })
+            res.json(mapResult);
+        })
+        .catch((error) => {
+            res.status(500).send(error);
+        })
+    }
+    catch(error){errorHandler(error, req, res);}
+}
+async function search(req, res) {
+    let API = process.env.API;
+    let url = `https://api.themoviedb.org/3/search/company?query=sony&api_key=${API}&page=1`;
     let axiosRes = await axios.get(url);
     res.json(axiosRes.data);
 }
-async function search(req,res){
-    let url = "https://api.themoviedb.org/3/search/company?query=sony&api_key=e693e677de5f501d0f33cbc824eda903&page=1";
-    let axiosRes = await axios.get(url);
-    res.json(axiosRes.data);
+function people(req, res) {
+    try {
+        let API = process.env.API;
+        let url = `https://api.themoviedb.org/3/person/2?api_key=${API}&language=en-US`;
+        axios.get(url)
+            .then((result) => {
+                let mapResult = result.data;
+                let person = new People(mapResult.name, mapResult.biography, mapResult.birthday, mapResult.place_of_birth);
+                res.json(person);
+            })
+            .catch((error) => {
+                res.status(500).send(error);
+            })
+    }
+    catch (error){errorHandler(error, req, res);}
 }
-async function people(req,res){
-    let url = "https://api.themoviedb.org/3/person/2?api_key=e693e677de5f501d0f33cbc824eda903&language=en-US";
-    let axiosRes = await axios.get(url);
-    res.json(axiosRes.data);
-}
-async function genres(req,res){
-    let url = "https://api.themoviedb.org/3/genre/movie/list?api_key=e693e677de5f501d0f33cbc824eda903&language=en-US";
+
+async function genres(req, res) {
+    let API = process.env.API;
+    let url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${API}&language=en-US`;
     let axiosRes = await axios.get(url);
     res.json(axiosRes.data);
 }
@@ -54,22 +82,11 @@ async function genres(req,res){
 //     let meow = "Hello ya teacher you reached my favorite bage, don't worry nothing creepy here";
 //     res.status(200).send(meow);
 // }
-function errorHandler(req, res) {
-    let object = { "status": 500, "responseText": "Sorry, something went wrong" };
-    res.status(500).json(object);
-}
+
 function pageNotFoundHandler(req, res) {
     let object = { "status": 404, "responseText": "Sorry, Page not found" };
-    res.status(404).json(object);
+    res.status(404).send(object);
 }
-
-// async function newMovieHandler(req, res) {
-//     const url = "https://api.themoviedb.org/3/movie/76341?api_key=e693e677de5f501d0f33cbc824eda903";
-//     // const url = "https://api.themoviedb.org/3/movie/550?api_key={e693e677de5f501d0f33cbc824eda903}&callback=test";
-//     let axiosRes = await axios.get(url);
-//     // JSON.stringify(axiosRes);
-//     res.json(axiosRes.data);
-// }
 
 function Movie(id, title, release_date, poster_path, overview) {
     this.id = id;
@@ -79,16 +96,34 @@ function Movie(id, title, release_date, poster_path, overview) {
     this.overiew = overview;
 }
 
-async function movieHandler(req, res) {
-    const url = "https://api.themoviedb.org/3/movie/76341?api_key=e693e677de5f501d0f33cbc824eda903";
-    let axiosRes = await axios.get(url);
-    const answers = axiosRes.data;
-    const movie = new Movie(
-        answers.id,
-        answers.title,
-        answers.release_date,
-        answers.poster_path,
-        answers.overview
-    );
-    res.json(movie);
+function People(name, biography, birthday, place_of_birth) {
+    this.name = name;
+    this.biography = biography;
+    this.birthday = birthday;
+    this.place_of_birth = place_of_birth;
+}
+
+function movieHandler(req, res) {
+    try {
+    let API = process.env.API;
+    const url = `https://api.themoviedb.org/3/movie/76341?api_key=${API}`;
+        axios.get(url)
+            .then((result) => {
+                let mapResult = result.data;
+                let movie = new Movie(mapResult.id, mapResult.title, mapResult.release_date, mapResult.poster_path, mapResult.overview);
+                res.json(movie);
+            })
+            .catch((error) => {
+                res.status(500).json(error);
+            })
+    }
+    catch (error) {errorHandler(error, req, res);}
+}
+
+function errorHandler(error, req, res) {
+    let object = {
+        status: 500,
+        responseText: error
+    }
+    res.status(500).send(object);
 }
