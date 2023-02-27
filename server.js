@@ -14,7 +14,7 @@ const pg = require('pg');
 server.use(cors());
 server.use(express.json());
 
-const PORT = 3001;
+const PORT = 3002;
 const client = new pg.Client(process.env.DATABASE_URL);
 
 client.connect().then(() => {
@@ -143,7 +143,7 @@ function movieHandler(req, res) {
 }
 
 function getFavMovieHandler(req, res) {
-    const sql = `SELECT * FROM favMovies`;
+    const sql = `SELECT * FROM favMovies;`;
     client.query(sql)
         .then((data) => {
             res.send(data.rows);
