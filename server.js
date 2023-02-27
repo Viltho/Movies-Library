@@ -9,13 +9,18 @@ const server = express();
 const axios = require('axios');
 
 require('dotenv').config();
-//server open for all clients requests
+const pg = require('pg');
+
 server.use(cors());
+server.use(express.json());
 
-const PORT = 3000;
+const PORT = 3001;
+const client = new pg.Client(process.env.DATABASE_URL);
 
-server.listen(PORT, () => {
-    console.log(`listening on ${PORT} : I am ready`);
+client.connect().then(() => {
+        server.listen(PORT, () => {
+            console.log(`listening on ${PORT} : I am ready`);
+        })
 })
 
 //Routes
@@ -24,47 +29,49 @@ server.get('/trending', trending);
 server.get('/search', search);
 server.get('/people', people);
 server.get('/genres', genres);
+server.get('/favMovie', getFavMovieHandler);
+server.post('/favMovie', addFavMovieHandler);
 // server.get('/newMovieHandler', newMovieHandler);
 // server.get('/favorite', favoriteHandler);
 server.get('*', pageNotFoundHandler);
 server.use(errorHandler);
 
-//functions 
-function trending(req, res) {
-    try{
-    let API = process.env.API;
-    let url = `https://api.themoviedb.org/3/trending/all/day?api_key=${API}`;
-    axios.get(url)
-        .then((result) => {
-            let mapResult = result.data.results.map((item) => {
-                let movie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
-                return movie;
+//functions meow
+function trending(req, res ) {
+    try {
+        let API = process.env.API;
+        let url = `https://api.themoviedb.org/3/trending/all/day?api_key=${API}`;
+        axios.get(url)
+            .then((result) => {
+                let mapResult = result.data.results.map((item) => {
+                    let movie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
+                    return movie;
+                })
+                res.json(mapResult);
             })
-            res.json(mapResult);
-        })
-        .catch((error) => {
-            res.status(500).send(error);
-        })
+            .catch((error) => {
+                res.status(500).send(error);
+            })
     }
-    catch(error){errorHandler(error, req, res);}
+    catch (error) { errorHandler(error, req, res); }
 }
 async function search(req, res) {
     try {
         let API = process.env.API;
-    let url = `https://api.themoviedb.org/3/search/movie?api_key=${API}&language=en-US&query=limitless&page=1`;
-    axios.get(url)
-        .then((result) => {
-            let mapResult = result.data.results.map((item) => {
-                let movie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
-                return movie;
+        let url = `https://api.themoviedb.org/3/search/movie?api_key=${API}&language=en-US&query=limitless&page=1`;
+        axios.get(url)
+            .then((result) => {
+                let mapResult = result.data.results.map((item) => {
+                    let movie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
+                    return movie;
+                })
+                res.json(mapResult);
             })
-            res.json(mapResult);
-        })
-        .catch((error) => {
-            res.status(500).send(error);
-        })
+            .catch((error) => {
+                res.status(500).send(error);
+            })
     }
-    catch(error){errorHandler(error, req, res);}
+    catch (error) { errorHandler(error, req, res); }
 }
 function people(req, res) {
     try {
@@ -80,17 +87,17 @@ function people(req, res) {
                 res.status(500).send(error);
             })
     }
-    catch (error){errorHandler(error, req, res);}
+    catch (error) { errorHandler(error, req, res); }
 }
 
 async function genres(req, res) {
     try {
-    let API = process.env.API;
-    let url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${API}&language=en-US`;
-    let axiosRes = await axios.get(url);
-    res.json(axiosRes.data);
+        let API = process.env.API;
+        let url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${API}&language=en-US`;
+        let axiosRes = await axios.get(url);
+        res.json(axiosRes.data);
     }
-    catch (error){errorHandler(error, req, res);}
+    catch (error) { errorHandler(error, req, res); }
 }
 
 // function favoriteHandler(req, res) {
@@ -120,8 +127,8 @@ function People(name, biography, birthday, place_of_birth) {
 
 function movieHandler(req, res) {
     try {
-    let API = process.env.API;
-    const url = `https://api.themoviedb.org/3/movie/76341?api_key=${API}`;
+        let API = process.env.API;
+        const url = `https://api.themoviedb.org/3/movie/76341?api_key=${API}`;
         axios.get(url)
             .then((result) => {
                 let mapResult = result.data;
@@ -132,7 +139,33 @@ function movieHandler(req, res) {
                 res.status(500).json(error);
             })
     }
-    catch (error) {errorHandler(error, req, res);}
+    catch (error) { errorHandler(error, req, res); }
+}
+
+function getFavMovieHandler(req, res) {
+    const sql = `SELECT * FROM favMovies`;
+    client.query(sql)
+        .then((data) => {
+            res.send(data.rows);
+        })
+        .catch((error) => {
+            errorHandler(error, req, res);
+        })
+}
+
+function addFavMovieHandler(req, res) {
+    const movie = req.body;
+    const sql = `INSERT INTO favmovies (movie_title, min, summary) VALUES ($1,$2,$3) RETURNING *;`
+    const values = [movie.movie_title, movie.min, movie.summary];
+
+    client.query(sql, values)
+        .then((data) => {
+            res.send("your movie was added !");
+        })
+        .catch(error => {
+            console.log(error);
+            // errorHandler(error, req, res);
+        });
 }
 
 function errorHandler(error, req, res) {
