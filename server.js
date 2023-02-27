@@ -36,8 +36,8 @@ server.post('/favMovie', addFavMovieHandler);
 server.get('*', pageNotFoundHandler);
 server.use(errorHandler);
 
-//functions 
-function trending(req, res) {
+//functions meow
+function trending(req, res ) {
     try {
         let API = process.env.API;
         let url = `https://api.themoviedb.org/3/trending/all/day?api_key=${API}`;
