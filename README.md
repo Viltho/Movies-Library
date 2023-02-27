@@ -36,3 +36,7 @@ This week, i will build the server and the database for my project.
 - if you go to /search it will display the search functionality working on the website using query and how many pages required.
 - if you go to /people and you have an id for the searched person the results will be an overiew for his background.
 - if you go to /genres it will display all aailable genres on the website so you can use them in the future for the search functionality.
+
+## Lab 13:
+
+- Added favMovie for get and post to import and export data from local Database
