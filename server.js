@@ -14,13 +14,13 @@ const pg = require('pg');
 server.use(cors());
 server.use(express.json());
 
-const PORT = 3002;
+const PORT = 3003;
 const client = new pg.Client(process.env.DATABASE_URL);
 
 client.connect().then(() => {
-        server.listen(PORT, () => {
-            console.log(`listening on ${PORT} : I am ready`);
-        })
+    server.listen(PORT, () => {
+        console.log(`listening on ${PORT} : I am ready`);
+    })
 })
 
 //Routes
@@ -31,13 +31,15 @@ server.get('/people', people);
 server.get('/genres', genres);
 server.get('/favMovie', getFavMovieHandler);
 server.post('/favMovie', addFavMovieHandler);
+server.delete('/favMovie/:id', deleteFavMovieHandler);
+server.put('/favMovie/:id', updateFavMovieHandler);
 // server.get('/newMovieHandler', newMovieHandler);
 // server.get('/favorite', favoriteHandler);
 server.get('*', pageNotFoundHandler);
 server.use(errorHandler);
 
 //functions meow
-function trending(req, res ) {
+function trending(req, res) {
     try {
         let API = process.env.API;
         let url = `https://api.themoviedb.org/3/trending/all/day?api_key=${API}`;
@@ -55,6 +57,7 @@ function trending(req, res ) {
     }
     catch (error) { errorHandler(error, req, res); }
 }
+
 async function search(req, res) {
     try {
         let API = process.env.API;
@@ -73,6 +76,7 @@ async function search(req, res) {
     }
     catch (error) { errorHandler(error, req, res); }
 }
+
 function people(req, res) {
     try {
         let API = process.env.API;
@@ -142,11 +146,37 @@ function movieHandler(req, res) {
     catch (error) { errorHandler(error, req, res); }
 }
 
+function deleteFavMovieHandler(req, res) {
+    const id = req.params.id;
+    const sql = `DELETE FROM favmovies WHERE id=${id};`;
+    client.query(sql)
+        .then((data) => {
+            console.log("movie with id has been deleted");
+            res.status(204).json({});
+        })
+        .catch((error) => {
+            errorHandler(error, req, res);
+        })
+}
+
+function updateFavMovieHandler(req, res) {
+    const id = req.params.id;
+    const sql = `UPDATE favmovies SET movie_title=$1, min=$2, summary=$3 WHERE id=${id} RETURNING *;`;
+    const values = [req.body.movie_title, req.body.poster_path, req.body.comments];
+    client.query(sql, values)
+    .then((data) => {
+        console.log(data);
+    })
+    .catch((error) => {
+        errorHandler(error, req, res);
+    })
+}
+
 function getFavMovieHandler(req, res) {
     const sql = `SELECT * FROM favMovies;`;
     client.query(sql)
         .then((data) => {
-            res.send(data.rows);
+            res.send(data);
         })
         .catch((error) => {
             errorHandler(error, req, res);
