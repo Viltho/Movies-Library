@@ -29,7 +29,7 @@ server.get('/trending', trending);
 server.get('/search', search);
 server.get('/people', people);
 server.get('/genres', genres);
-server.get('/favMovie', getFavMovieHandler);
+server.get('/favMovie/:id', getFavMovieHandler);
 server.post('/favMovie', addFavMovieHandler);
 server.delete('/favMovie/:id', deleteFavMovieHandler);
 server.put('/favMovie/:id', updateFavMovieHandler);
@@ -165,7 +165,7 @@ function updateFavMovieHandler(req, res) {
     const values = [req.body.movie_title, req.body.poster_path, req.body.comments];
     client.query(sql, values)
     .then((data) => {
-        console.log(data);
+        res.status(200).json(data);
     })
     .catch((error) => {
         errorHandler(error, req, res);
@@ -173,14 +173,15 @@ function updateFavMovieHandler(req, res) {
 }
 
 function getFavMovieHandler(req, res) {
-    const sql = `SELECT * FROM favMovies;`;
+    const id = req.params.id;
+    const sql = `SELECT * FROM favmovies WHERE id=${id};`;
     client.query(sql)
-        .then((data) => {
-            res.send(data);
-        })
-        .catch((error) => {
-            errorHandler(error, req, res);
-        })
+    .then((data) => {
+        res.status(200).json(data.rows);
+    })
+    .catch((error) => {
+        errorHandler(error, req, res);
+    })
 }
 
 function addFavMovieHandler(req, res) {
