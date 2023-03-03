@@ -40,3 +40,7 @@ This week, i will build the server and the database for my project.
 ## Lab 13:
 
 - Added favMovie for get and post to import and export data from local Database
+
+# Lab 14:
+
+- Added delete and update functions
