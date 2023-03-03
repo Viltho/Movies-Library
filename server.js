@@ -161,7 +161,7 @@ function deleteFavMovieHandler(req, res) {
 
 function updateFavMovieHandler(req, res) {
     const id = req.params.id;
-    const sql = `UPDATE favmovies SET movie_title=$1, min=$2, summary=$3 WHERE id=${id} RETURNING *;`;
+    const sql = `UPDATE favmovies SET movie_title=$1, min=$2, summary= $3 WHERE id=${id} RETURNING *;`;
     const values = [req.body.movie_title, req.body.poster_path, req.body.comments];
     client.query(sql, values)
     .then((data) => {
