@@ -14,7 +14,7 @@ const pg = require('pg');
 server.use(cors());
 server.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 const client = new pg.Client(process.env.DATABASE_URL);
 
 client.connect().then(() => {
@@ -29,6 +29,7 @@ server.get('/trending', trending);
 server.get('/search', search);
 server.get('/people', people);
 server.get('/genres', genres);
+server.get('/favMovie', getFavHandler);
 server.get('/favMovie/:id', getFavMovieHandler);
 server.post('/favMovie', addFavMovieHandler);
 server.delete('/favMovie/:id', deleteFavMovieHandler);
@@ -129,6 +130,23 @@ function People(name, biography, birthday, place_of_birth) {
     this.place_of_birth = place_of_birth;
 }
 
+function getFavHandler(req, res) {
+    try {
+        let API = process.env.API;
+        const url = `https://api.themoviedb.org/3/movie/76341?api_key=${API}`;
+        axios.get(url)
+            .then((result) => {
+                let mapResult = result.data;
+                let movie = new Movie(mapResult.id, mapResult.title, mapResult.release_date, mapResult.poster_path, mapResult.overview);
+                res.json(movie);
+            })
+            .catch((error) => {
+                res.status(500).json(error);
+            })
+    }
+    catch (error) { errorHandler(error, req, res); }
+}
+
 function movieHandler(req, res) {
     try {
         let API = process.env.API;
@@ -162,10 +180,10 @@ function deleteFavMovieHandler(req, res) {
 function updateFavMovieHandler(req, res) {
     const id = req.params.id;
     const sql = `UPDATE favmovies SET movie_title=$1, min=$2, summary= $3 WHERE id=${id} RETURNING *;`;
-    const values = [req.body.movie_title, req.body.poster_path, req.body.comments];
+    const values = [req.body.movie_title, req.body.min, req.body.summary];
     client.query(sql, values)
     .then((data) => {
-        res.status(200).json(data);
+        res.status(200).json(data.rows);
     })
     .catch((error) => {
         errorHandler(error, req, res);
@@ -188,10 +206,9 @@ function addFavMovieHandler(req, res) {
     const movie = req.body;
     const sql = `INSERT INTO favmovies (movie_title, min, summary) VALUES ($1,$2,$3) RETURNING *;`
     const values = [movie.movie_title, movie.min, movie.summary];
-
     client.query(sql, values)
         .then((data) => {
-            res.send("your movie was added !");
+            res.status(200).json(data.rows);
         })
         .catch(error => {
             console.log(error);
