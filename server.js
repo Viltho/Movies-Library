@@ -14,7 +14,7 @@ const pg = require('pg');
 server.use(cors());
 server.use(express.json());
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const client = new pg.Client(process.env.DATABASE_URL);
 
 client.connect().then(() => {
