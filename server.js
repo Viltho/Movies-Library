@@ -35,7 +35,7 @@ server.post('/favMovie', addFavMovieHandler);
 server.delete('/favMovie/:id', deleteFavMovieHandler);
 server.put('/favMovie/:id', updateFavMovieHandler);
 // server.get('/newMovieHandler', newMovieHandler);
-// server.get('/favorite', favoriteHandler);
+server.get('/favorite', favoriteHandler);
 server.get('*', pageNotFoundHandler);
 server.use(errorHandler);
 
@@ -105,10 +105,19 @@ async function genres(req, res) {
     catch (error) { errorHandler(error, req, res); }
 }
 
-// function favoriteHandler(req, res) {
-//     let meow = "Hello ya teacher you reached my favorite bage, don't worry nothing creepy here";
-//     res.status(200).send(meow);
-// }
+function favoriteHandler(req, res) {
+    let API = process.env.API;
+    const url = `https://api.themoviedb.org/3/movie/76341?api_key=${API}`;
+    axios.get(url)
+        .then((result) => {
+            let mapResult = result.data;
+            let movie = new Movie(mapResult.id, mapResult.title, mapResult.release_date, mapResult.poster_path, mapResult.overview);
+            res.json(movie);
+        })
+        .catch((error) => {
+            res.status(500).json(error);
+        })
+}
 
 function pageNotFoundHandler(req, res) {
     let object = { "status": 404, "responseText": "Sorry, Page not found" };
@@ -131,20 +140,14 @@ function People(name, biography, birthday, place_of_birth) {
 }
 
 function getFavHandler(req, res) {
-    try {
-        let API = process.env.API;
-        const url = `https://api.themoviedb.org/3/movie/76341?api_key=${API}`;
-        axios.get(url)
-            .then((result) => {
-                let mapResult = result.data;
-                let movie = new Movie(mapResult.id, mapResult.title, mapResult.release_date, mapResult.poster_path, mapResult.overview);
-                res.json(movie);
-            })
-            .catch((error) => {
-                res.status(500).json(error);
-            })
-    }
-    catch (error) { errorHandler(error, req, res); }
+    const sql = `SELECT * FROM favmovies;`;
+    client.query(sql)
+        .then((data) => {
+            res.status(200).json(data.rows);
+        })
+        .catch((error) => {
+            errorHandler(error, req, res);
+        })
 }
 
 function movieHandler(req, res) {
