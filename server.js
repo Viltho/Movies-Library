@@ -32,7 +32,7 @@ server.get('/people', people);
 server.get('/genres', genres);
 server.get('/favMovie', getFavHandler);
 server.get('/favMovie/:id', getFavMovieHandler);
-server.post('/favMovie', addFavMovieHandler);
+server.post('/addFavourite', addFavMovieHandler);
 server.delete('/favMovie/:id', deleteFavMovieHandler);
 server.put('/favMovie/:id', updateFavMovieHandler);
 // server.get('/newMovieHandler', newMovieHandler);
