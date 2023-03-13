@@ -149,7 +149,7 @@ function Movie(id, title, release_date, poster_path, overview) {
     this.title = title;
     this.release_date = release_date;
     this.poster_path = poster_path;
-    this.overiew = overview;
+    this.overview = overview;
 }
 
 function People(name, biography, birthday, place_of_birth) {
@@ -228,7 +228,7 @@ function getFavMovieHandler(req, res) {
 function addFavMovieHandler(req, res) {
     const movie = req.body;
     const sql = `INSERT INTO favmovies (movie_title, min, summary) VALUES ($1,$2,$3) RETURNING *;`
-    const values = [movie.movie_title, movie.min, movie.summary];
+    const values = [movie.movie_title, movie.poster_path, movie.release_date, movie.overview];
     client.query(sql, values)
         .then((data) => {
             res.status(200).json(data.rows);
