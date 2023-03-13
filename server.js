@@ -205,30 +205,30 @@ function updateFavMovieHandler(req, res) {
     const sql = `UPDATE favmovies SET movie_title=$1, min=$2, summary= $3 WHERE id=${id} RETURNING *;`;
     const values = [req.body.movie_title, req.body.min, req.body.summary];
     client.query(sql, values)
-    .then((data) => {
-        res.status(200).json(data.rows);
-    })
-    .catch((error) => {
-        errorHandler(error, req, res);
-    })
+        .then((data) => {
+            res.status(200).json(data.rows);
+        })
+        .catch((error) => {
+            errorHandler(error, req, res);
+        })
 }
 
 function getFavMovieHandler(req, res) {
     const id = req.params.id;
     const sql = `SELECT * FROM favmovies WHERE id=${id};`;
     client.query(sql)
-    .then((data) => {
-        res.status(200).json(data.rows);
-    })
-    .catch((error) => {
-        errorHandler(error, req, res);
-    })
+        .then((data) => {
+            res.status(200).json(data.rows);
+        })
+        .catch((error) => {
+            errorHandler(error, req, res);
+        })
 }
 
 function addFavMovieHandler(req, res) {
     const movie = req.body;
-    const sql = `INSERT INTO favmovies (id, title, poster_path, release_date, overview, comment) VALUES ($1,$2,$3,$4,$5) RETURNING *;`
-    const values = [movie.id, movie.title, movie.poster_path, movie.release_date, movie.overview];
+    const sql = `INSERT INTO favmovies (id, title, poster_path, release_date, overview, comment) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`
+    const values = [movie.id, movie.title, movie.poster_path, movie.release_date, movie.overview, movie.comment];
     client.query(sql, values)
         .then((data) => {
             res.status(200).json(data.rows);
