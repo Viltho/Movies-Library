@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS favmovies;
 
 CREATE TABLE IF NOT EXISTS favmovies (
-    id SERIAL PRIMARY KEY,
+    id VARCHAR(255),
     movie_title VARCHAR(255),
     release_date VARCHAR(255),
     poster_path VARCHAR(255),
