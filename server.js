@@ -26,6 +26,7 @@ client.connect().then(() => {
 //Routes
 server.get('/', movieHandler);
 server.get('/trending', trending);
+server.get('/movies', movie);
 server.get('/search', search);
 server.get('/people', people);
 server.get('/genres', genres);
@@ -40,6 +41,25 @@ server.get('*', pageNotFoundHandler);
 server.use(errorHandler);
 
 //functions meow
+function movie(req, res) {
+    try {
+        let API = process.env.API;
+        let url = `https://api.themoviedb.org/3/movie/top_rated?api_key=${API}&language=en-US&page=1`;
+        axios.get(url)
+            .then((result) => {
+                let mapResult = result.data.results.map((item) => {
+                    let movie = new Movie(item.id, item.title, item.release_date, item.poster_path, item.overview);
+                    return movie;
+                })
+                res.json(mapResult);
+            })
+            .catch((error) => {
+                res.status(500).send(error);
+            })
+    }
+    catch (error) { errorHandler(error, req, res); }
+}
+
 function trending(req, res) {
     try {
         let API = process.env.API;
