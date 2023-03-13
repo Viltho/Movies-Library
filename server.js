@@ -227,7 +227,7 @@ function getFavMovieHandler(req, res) {
 
 function addFavMovieHandler(req, res) {
     const movie = req.body;
-    const sql = `INSERT INTO favmovies (id, title, poster_path, release_date, overview, comment) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *;`
+    const sql = `INSERT INTO favmovies (id, title, poster_path, release_date, overview, comment) VALUES ($1,$2,$3,$4,$5) RETURNING *;`
     const values = [movie.id, movie.title, movie.poster_path, movie.release_date, movie.overview];
     client.query(sql, values)
         .then((data) => {
