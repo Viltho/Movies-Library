@@ -34,7 +34,7 @@ server.get('/favMovie', getFavHandler);
 server.get('/favMovie/:id', getFavMovieHandler);
 server.post('/addFavourite', addFavMovieHandler);
 server.delete('/favMovie/:id', deleteFavMovieHandler);
-server.put('/updateFavMovie/:id', updateFavMovieHandler);
+server.put('/favMovie/:id', updateFavMovieHandler);
 // server.get('/newMovieHandler', newMovieHandler);
 server.get('/favorite', favoriteHandler);
 server.get('*', pageNotFoundHandler);
