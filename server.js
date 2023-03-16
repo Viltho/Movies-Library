@@ -190,10 +190,16 @@ function movieHandler(req, res) {
 function deleteFavMovieHandler(req, res) {
     const id = req.params.id;
     const sql = `DELETE FROM favmovies WHERE id=${id};`;
-    client.query(sql)
+    client.query(sql, values)
         .then((data) => {
-            console.log("movie with id has been deleted");
-            res.status(204).json({});
+            const sql = `SELECT * FROM favmovies`;
+            client.query(sql)
+                .then((data) => {
+                    res.status(200).json(data.rows);
+                })
+                .catch((error) => {
+                    errorHandler(error, req, res);
+                })
         })
         .catch((error) => {
             errorHandler(error, req, res);
