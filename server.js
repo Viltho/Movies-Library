@@ -34,7 +34,7 @@ server.get('/favMovie', getFavHandler);
 server.get('/favMovie/:id', getFavMovieHandler);
 server.post('/addFavourite', addFavMovieHandler);
 server.delete('/favMovie/:id', deleteFavMovieHandler);
-server.put('/favMovie/:id', updateFavMovieHandler);
+server.put('/updateFavMovie/:id', updateFavMovieHandler);
 // server.get('/newMovieHandler', newMovieHandler);
 server.get('/favorite', favoriteHandler);
 server.get('*', pageNotFoundHandler);
@@ -202,7 +202,7 @@ function deleteFavMovieHandler(req, res) {
 
 function updateFavMovieHandler(req, res) {
     const movie = req.body.id;
-    const sql = `UPDATE favmovies SET comment =$1 WHERE id =${movie.id} RETURNING *;`;
+    const sql = `UPDATE favmovies SET comment =$1 WHERE id = id RETURNING *;`;
     const values = [movie.comment];
     client.query(sql, values)
         .then((data) => {
