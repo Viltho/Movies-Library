@@ -201,18 +201,18 @@ function deleteFavMovieHandler(req, res) {
 }
 
 function updateFavMovieHandler(req, res) {
-    const movie = req.body.id;
-    const sql = `UPDATE favmovies SET comment =$1 WHERE id =${movie.id} RETURNING *;`;
-    const values = [movie.comment];
-
+    const movie = req.body;
+    const sql = `UPDATE favmovies SET comment =$1 WHERE id =$2 RETURNING *;`;
+    const values = [movie.id, movie.comment];
     client.query(sql, values)
         .then((data) => {
             res.status(200).json(data.rows);
         })
-        .catch((error) => {
-            errorHandler(error, req, res);
+        .catch(error => {
+            console.log(error);
         });
 }
+
 
 function getFavMovieHandler(req, res) {
     const id = req.params.id;
