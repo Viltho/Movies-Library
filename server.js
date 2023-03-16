@@ -207,7 +207,14 @@ function updateFavMovieHandler(req, res) {
     const values = [movie.comment];
     client.query(sql, values)
         .then((data) => {
-            res.status(200).json(data.rows);
+            const sql = `SELECT * FROM favmovies`;
+            client.query(sql)
+                .then((data) => {
+                    res.status(200).json(data.rows);
+                })
+                .catch((error) => {
+                    errorHandler(error, req, res);
+                })
         })
         .catch(error => {
             console.log(error);
