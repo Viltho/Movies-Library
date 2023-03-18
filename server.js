@@ -246,11 +246,11 @@ function getFavMovieHandler(req, res) {
 function updateCustomerHandler(req, res) {
     const id = req.params.id;
     const clients = req.body;
-    const sql = `UPDATE favmovies SET client_name=$1, client_code=$2 WHERE id =${id} RETURNING *;`;
+    const sql = `UPDATE clients SET client_name=$1, client_code=$2 WHERE id =${id} RETURNING *;`;
     const values = [clients.client_name, clients.client_code];
     client.query(sql, values)
         .then((data) => {
-            const sql = `SELECT * FROM favmovies`;
+            const sql = `SELECT * FROM clients`;
             client.query(sql)
                 .then((data) => {
                     res.status(200).json(data.rows);
