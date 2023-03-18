@@ -264,24 +264,24 @@ function updateCustomerHandler(req, res) {
         });
 }
 
-function deleteCustomersHandler(req, res) {
-    const id = req.params.id;
-    const sql = `DELETE FROM clients WHERE id=${id} RETURNING *;`;
-    client.query(sql)
-        .then((data) => {
-            const sql = `SELECT * FROM clients`;
-            client.query(sql)
-                .then((data) => {
-                    res.status(200).json(data.rows);
-                })
-                .catch((error) => {
-                    errorHandler(error, req, res);
-                })
-        })
-        .catch((error) => {
-            errorHandler(error, req, res);
-        })
-}
+// function deleteCustomersHandler(req, res) {
+//     const id = req.params.id;
+//     const sql = `DELETE FROM clients WHERE id=${id} RETURNING *;`;
+//     client.query(sql)
+//         .then((data) => {
+//             const sql = `SELECT * FROM clients`;
+//             client.query(sql)
+//                 .then((data) => {
+//                     res.status(200).json(data.rows);
+//                 })
+//                 .catch((error) => {
+//                     errorHandler(error, req, res);
+//                 })
+//         })
+//         .catch((error) => {
+//             errorHandler(error, req, res);
+//         })
+// }
 
 function getCustomerHandler(req, res) {
     const sql = `SELECT * FROM clients;`;
