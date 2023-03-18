@@ -31,6 +31,7 @@ server.get('/search', search);
 server.get('/people', people);
 server.get('/genres', genres);
 server.get('/favMovie', getFavHandler);
+server.get('/addCustomer', getCustomerHandler);
 server.get('/favMovie/:id', getFavMovieHandler);
 server.post('/addFavourite', addFavMovieHandler);
 server.post('/addCustomer', addCustomerHandler);
@@ -252,6 +253,17 @@ function addFavMovieHandler(req, res) {
         .catch(error => {
             console.log(error);
         });
+}
+
+function getCustomerHandler(req, res) {
+    const sql = `SELECT * FROM clients;`;
+    client.query(sql)
+        .then((data) => {
+            res.status(200).json(data.rows);
+        })
+        .catch((error) => {
+            errorHandler(error, req, res);
+        })
 }
 
 function addCustomerHandler(req, res) {
