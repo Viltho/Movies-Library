@@ -272,7 +272,14 @@ function addCustomerHandler(req, res) {
     const values = [clients.client_name, clients.client_code];
     client.query(sql, values)
         .then((data) => {
-            res.status(200).json(data.rows);
+            const sql = `SELECT * FROM clients;`;
+            client.query(sql)
+                .then((data) => {
+                    res.status(200).json(data.rows);
+                })
+                .catch((error) => {
+                    errorHandler(error, req, res);
+                })
         })
         .catch(error => {
             console.log(error);
