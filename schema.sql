@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS favmovies (
 DROP TABLE IF EXISTS clients;
 
 CREATE TABLE IF NOT EXISTS clients (
+    id SERIAL PRIMARY KEY,
     client_name NVARCHAR(10000) COLLATE Arabic_CI_AI_KS_WS,
-    id INTEGER(10000)
+    client_code INTEGER(10000)
 );
