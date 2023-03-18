@@ -32,11 +32,13 @@ server.get('/people', people);
 server.get('/genres', genres);
 server.get('/favMovie', getFavHandler);
 server.get('/addCustomer', getCustomerHandler);
+server.post('/addCustomer', addCustomerHandler);
+server.put('/addCustomer/:id', updateCustomerHandler);
+server.delete('/addCustomer/:id', deleteCustomersHandler);
 server.get('/favMovie/:id', getFavMovieHandler);
 server.post('/addFavourite', addFavMovieHandler);
-server.post('/addCustomer', addCustomerHandler);
-server.delete('/favMovie/:id', deleteFavMovieHandler);
 server.put('/favMovie/:id', updateFavMovieHandler);
+server.delete('/favMovie/:id', deleteFavMovieHandler);
 // server.get('/newMovieHandler', newMovieHandler);
 server.get('/favorite', favoriteHandler);
 server.get('*', pageNotFoundHandler);
@@ -229,7 +231,6 @@ function updateFavMovieHandler(req, res) {
         });
 }
 
-
 function getFavMovieHandler(req, res) {
     const id = req.params.id;
     const sql = `SELECT * FROM favmovies WHERE id=${id};`;
@@ -242,17 +243,44 @@ function getFavMovieHandler(req, res) {
         })
 }
 
-function addFavMovieHandler(req, res) {
-    const movie = req.body;
-    const sql = `INSERT INTO favmovies (title, poster_path, release_date, overview, comment) VALUES ($1, $2, $3, $4, $5) RETURNING *;`
-    const values = [movie.title, movie.poster_path, movie.release_date, movie.overview, movie.comment];
+function updateCustomerHandler(req, res) {
+    const id = req.params.id;
+    const clients = req.body;
+    const sql = `UPDATE favmovies SET client_name=$1, client_code=$2 WHERE id =${id} RETURNING *;`;
+    const values = [clients.client_name, clients.client_code];
     client.query(sql, values)
         .then((data) => {
-            res.status(200).json(data.rows);
+            const sql = `SELECT * FROM favmovies`;
+            client.query(sql)
+                .then((data) => {
+                    res.status(200).json(data.rows);
+                })
+                .catch((error) => {
+                    errorHandler(error, req, res);
+                })
         })
         .catch(error => {
             console.log(error);
         });
+}
+
+function deleteCustomersHandler(req, res) {
+    const id = req.params.id;
+    const sql = `DELETE FROM clients WHERE id=${id} RETURNING *;`;
+    client.query(sql)
+        .then((data) => {
+            const sql = `SELECT * FROM clients`;
+            client.query(sql)
+                .then((data) => {
+                    res.status(200).json(data.rows);
+                })
+                .catch((error) => {
+                    errorHandler(error, req, res);
+                })
+        })
+        .catch((error) => {
+            errorHandler(error, req, res);
+        })
 }
 
 function getCustomerHandler(req, res) {
@@ -285,7 +313,6 @@ function addCustomerHandler(req, res) {
             console.log(error);
         });
 }
-
 
 function errorHandler(error, req, res) {
     let object = {
