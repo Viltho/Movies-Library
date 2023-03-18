@@ -268,8 +268,8 @@ function getCustomerHandler(req, res) {
 
 function addCustomerHandler(req, res) {
     const client = req.body;
-    const sql = `INSERT INTO clients (client_name, id) VALUES ($2, $3) RETURNING *;`
-    const values = [client.client_name, client.id];
+    const sql = `INSERT INTO clients (id, client_name) VALUES ($1, $2) RETURNING *;`
+    const values = [client.id, client.client_name];
     client.query(sql, values)
         .then((data) => {
             res.status(200).json(data.rows);
