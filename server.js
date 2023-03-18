@@ -33,6 +33,7 @@ server.get('/genres', genres);
 server.get('/favMovie', getFavHandler);
 server.get('/favMovie/:id', getFavMovieHandler);
 server.post('/addFavourite', addFavMovieHandler);
+server.post('/addCustomer', addCustomerHandler);
 server.delete('/favMovie/:id', deleteFavMovieHandler);
 server.put('/favMovie/:id', updateFavMovieHandler);
 // server.get('/newMovieHandler', newMovieHandler);
@@ -252,6 +253,20 @@ function addFavMovieHandler(req, res) {
             console.log(error);
         });
 }
+
+function addCustomerHandler(req, res) {
+    const client = req.body;
+    const sql = `INSERT INTO clients (client_name, id) VALUES ($2, $3) RETURNING *;`
+    const values = [client.client_name, client.id];
+    client.query(sql, values)
+        .then((data) => {
+            res.status(200).json(data.rows);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
 
 function errorHandler(error, req, res) {
     let object = {
