@@ -266,7 +266,7 @@ function updateCustomerHandler(req, res) {
 
 function deleteCustomersHandler(req, res) {
     const id = req.params.id;
-    const sql = `DELETE FROM clients WHERE id=${id} RETURNING *;`;
+    const sql = `DELETE FROM clients WHERE id=${id};`;
     client.query(sql)
         .then((data) => {
             const sql = `SELECT * FROM clients`;
