@@ -296,8 +296,8 @@ function getCustomerHandler(req, res) {
 
 function addFavMovieHandler(req, res) {
     const clients = req.body;
-    const sql = `INSERT INTO favmovies (movie_title, release_date, poster_path, overview, comment) VALUES ($1, $2, $3, $4, $5) RETURNING *;`
-    const values = [clients.movie_title, clients.release_date, clients.poster_path, clients.overview, clients.comment];
+    const sql = `INSERT INTO favmovies (title, release_date, poster_path, overview, comment) VALUES ($1, $2, $3, $4, $5) RETURNING *;`
+    const values = [clients.title, clients.release_date, clients.poster_path, clients.overview, clients.comment];
     client.query(sql, values)
         .then((data) => {
             const sql = `SELECT * FROM favmovies;`;
