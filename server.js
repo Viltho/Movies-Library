@@ -36,7 +36,7 @@ server.post('/addCustomer', addCustomerHandler);
 server.put('/addCustomer/:id', updateCustomerHandler);
 server.delete('/addCustomer/:id', deleteCustomersHandler);
 server.get('/favMovie/:id', getFavMovieHandler);
-// server.post('/addFavourite', addFavMovieHandler);
+server.post('/addFavourite', addFavMovieHandler);
 server.put('/favMovie/:id', updateFavMovieHandler);
 server.delete('/favMovie/:id', deleteFavMovieHandler);
 // server.get('/newMovieHandler', newMovieHandler);
@@ -292,6 +292,26 @@ function getCustomerHandler(req, res) {
         .catch((error) => {
             errorHandler(error, req, res);
         })
+}
+
+function addFavMovieHandler(req, res) {
+    const clients = req.body;
+    const sql = `INSERT INTO favmovies (movie_title, release_date, poster_path, overview, comment) VALUES ($1, $2, $3, $4, $5) RETURNING *;`
+    const values = [clients.movie_title, clients.release_date, clients.poster_path, clients.overview, clients.comment];
+    client.query(sql, values)
+        .then((data) => {
+            const sql = `SELECT * FROM favmovies;`;
+            client.query(sql)
+                .then((data) => {
+                    res.status(200).json(data.rows);
+                })
+                .catch((error) => {
+                    errorHandler(error, req, res);
+                })
+        })
+        .catch(error => {
+            console.log(error);
+        });
 }
 
 function addCustomerHandler(req, res) {
