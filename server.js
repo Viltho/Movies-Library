@@ -389,6 +389,7 @@ server.get('/getPostById/:id', getPostByIdHandler)
 
 server.post('/addUsers', addUsersHandler)
 server.get('/getUsers', getUsersHandler)
+server.get('/getUsers/:id', getUsersByEmailHandler)
 server.post('/addPost', savePostHandler)
 server.get('/getAllPosts', getAllPostsHandler)
 
@@ -417,6 +418,17 @@ function addUsersHandler(req, res) {
 
 function getUsersHandler(req, res) {
     const sql = `SELECT * FROM Users;`
+    client.query(sql)
+        .then((data) => {
+            res.send(data.rows);
+        })
+        .catch(error => {
+            res.send('error');
+        });
+}
+function getUsersByEmailHandler(req, res) {
+    const email = req.params.email;
+    const sql = `SELECT * FROM Users WHERE email=${email};`
     client.query(sql)
         .then((data) => {
             res.send(data.rows);
