@@ -440,14 +440,13 @@ function getUsersByEmailHandler(req, res) {
 
 function savePostHandler(req, res) {
     const Post = req.body;
-    const sql = `INSERT INTO Posts (userId, title, content,imageURL) VALUES ($1, $2, $3,$4) RETURNING *;`
-    const values = [Post.userId, Post.title, Post.content, Post.imageURL];
+    const sql = `INSERT INTO Posts (userId, imageURL, title, content, numberoflikes, Created_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`
+    const values = [Post.userId, Post.title, Post.content, Post.imageURL, Post.numberoflikes, Post.Created_at];
     client.query(sql, values)
         .then((data) => {
             res.send("your data was added !");
         })
         .catch(error => {
-            // console.log(error);
             errorHandler(error, req, res);
         });
 }
