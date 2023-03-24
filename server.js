@@ -427,8 +427,8 @@ function getUsersHandler(req, res) {
         });
 }
 function getUsersByEmailHandler(req, res) {
-    const email = req.params.email;
-    const sql = `SELECT * FROM Users WHERE email=${email} RETURNING *;`
+    const email = req.params.id;
+    const sql = `SELECT * FROM Users WHERE id=${email} RETURNING *;`
     client.query(sql)
         .then((data) => {
             res.send(data.rows);
