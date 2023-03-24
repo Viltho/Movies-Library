@@ -405,7 +405,7 @@ function homeHandler(req, res) {
 function addUsersHandler(req, res) {
     const user = req.body;
     const sql = `INSERT INTO Users (userFullName, email, imageURL, bio) VALUES ($1, $2, $3, $4) RETURNING *`;
-    const values = [user.userFullName, , user.email, user.imageURL, user.bio];
+    const values = [user.userFullName, user.email, user.imageURL, user.bio];
     client.query(sql, values)
         .then((data) => {
             res.send(data.rows);
